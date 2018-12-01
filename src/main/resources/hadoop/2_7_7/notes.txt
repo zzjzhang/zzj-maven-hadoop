@@ -1,0 +1,14 @@
+HADOOP 2.7.7
+
+WEB SITE:
+HDFS: http://IP:50070
+MAP-REDUCE: http://IP:8088
+
+开放端口：
+8088
+50070
+
+登陆SSH：
+SSH localhost
+
+HADOOP中不同用户权限的区分很重要，不同用户分别使用JPS命令只能看到自己启动的HADOOP进程（比如：admin用户、root用户）

@@ -1,0 +1,22 @@
+HBASE 2.0.2
+
+WEB SITE:
+MASTER: http://IP:16010
+REGION SERVER: http://IP:16030
+
+开放端口：
+2181（Zookeeper）
+16000（HBase）
+16010（HBase）
+16020（HBase）
+16030（HBase）
+
+ECLIPSE测试环境：WINDOWS 10
+本地 C:\Windows\System32\drivers\etc 下名为hosts的系统文件
+打开 hosts 文件后，添加 HBase 集群服务器的主机名及IP地址如下：
+IP 主机名
+
+LINUX服务器上：/etc/hosts 增加如下：
+HBaseIP   HBase主机名称
+
+报错: Master is initializing：只需要等一会儿就行了

@@ -1,25 +1,25 @@
 package task.hbase;
 
-import org.junit.Test;
 import java.io.IOException;
 import org.apache.hadoop.hbase.Cell;
-import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.hbase.CellUtil;
 import org.apache.hadoop.hbase.TableName;
+import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.client.Table;
-import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Admin;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hbase.filter.RowFilter;
+import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.CompareOperator;
+import org.apache.hadoop.hbase.filter.RowFilter;
 import org.apache.hadoop.hbase.filter.FilterList;
 import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
-import org.apache.hadoop.hbase.filter.FilterList.Operator;
 import org.apache.hadoop.hbase.filter.ColumnPrefixFilter;
+import org.apache.hadoop.hbase.filter.FilterList.Operator;
+import org.apache.hadoop.hbase.filter.PageFilter;
 import org.apache.hadoop.hbase.filter.RegexStringComparator;
 import org.apache.hadoop.hbase.filter.SingleColumnValueFilter;
 
@@ -41,11 +41,10 @@ public class Task3 implements Runnable {
 	private Connection connection;
 	private Admin admin;
 	private TableName tableName;
-	
-	
+
+
 	// 2. 构造方法
 	public Task3() {
-		// 
 		configuration = HBaseConfiguration.create();
 		configuration.set("hbase.zookeeper.quorum", "192.168.157.129");
 		configuration.set("hbase.zookeeper.property.clientPort", "2181");
@@ -59,9 +58,9 @@ public class Task3 implements Runnable {
 
 		tableName = TableName.valueOf("TABLE_1");
 	}
-	
 
-	
+
+
 	/**
      * 过滤器
      * 列值过滤器
@@ -147,9 +146,28 @@ public class Task3 implements Runnable {
                 System.out.println(Bytes.toString(cell.getQualifierArray(), cell.getQualifierOffset(), cell.getQualifierLength()) + " : " + 
                                 Bytes.toString(cell.getValueArray(), cell.getValueOffset(), cell.getValueLength()));
             }
-
-            System.out.println("-----------------------------------------");
         }
+    }
+
+
+    /**
+     * 分页 过滤器
+     * 
+     */
+    public void pageFilter(String tableName) throws IOException {
+    	Table table = connection.getTable(TableName.valueOf(tableName));
+
+    	Scan scan = new Scan();
+    	long pageSize = 10L;
+    	PageFilter pageFilter = new PageFilter(pageSize);
+    	scan.setFilter(pageFilter);
+
+    	ResultScanner resultScanner = table.getScanner(scan);
+
+    	for(Result result : resultScanner) {
+    		String rowKey = new String(result.getRow());
+    		System.out.println("row key : " + rowKey);
+    	}
     }
 
 

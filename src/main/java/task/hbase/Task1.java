@@ -119,40 +119,10 @@ public class Task1 implements Runnable {
 	}
 
 
-
-	public void run() {
-
-	}
-
-
-
-	// main方法
-	public static void main(String[] args) {
-		Task1 task1 = new Task1();
-
-		try {
-			task1.createTable();
-			//task1.insertManyData();
-			//task1.querySingleRow();
-			//task1.scanTable();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		/*try {
-			task2.insertOneData();
-			task2.closeConn();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}*/
-	}
-
-
-
-
-
-
-    // 单条插入
+	/**
+	 * 单条插入
+	 * 
+	 */
 	@Test
     public void insertOneData() throws IOException {
 		// new 一个列  ，A0001_20181115_01 为 row key
@@ -170,7 +140,10 @@ public class Task1 implements Runnable {
     }
 
 
-    // 插入多个列
+    /**
+     * 插入多个列
+     * 
+     */
     @Test
     public void insertManyData() throws IOException {
         Table table = connection.getTable(TableName.valueOf("TABLE_1"));
@@ -200,7 +173,10 @@ public class Task1 implements Runnable {
     }
 
 
-    // 同一条数据的插入
+    /**
+     * 同一条数据的插入
+     * 
+     */
     @Test
     public void singleRowInsert() throws IOException {
         Table table = connection.getTable(TableName.valueOf("TABLE_1"));
@@ -217,7 +193,10 @@ public class Task1 implements Runnable {
     }
 
 
-    // 数据的更新，hbase对数据只有追加，没有更新，但是查询的时候会把最新的数据返回给我们
+    /**
+     * 数据的更新，hbase对数据只有追加，没有更新，但是查询的时候会把最新的数据返回给我们
+     * 
+     */
     @Test
     public void updateData() throws IOException {
         Table table = connection.getTable(TableName.valueOf("TABLE_1"));
@@ -232,7 +211,10 @@ public class Task1 implements Runnable {
     }
 
 
-    // 删除数据
+    /**
+     * 删除数据
+     * 
+     */
     @Test
     public void deleteData() throws IOException {
     	Table table = connection.getTable(TableName.valueOf("TABLE_1"));
@@ -268,7 +250,11 @@ public class Task1 implements Runnable {
     }
 
 
-    // 查询
+ 
+    /**
+     * 查询
+     * 
+     */
     @Test
     public void querySingleRow() throws IOException {
         Table table = connection.getTable(TableName.valueOf("TABLE_1"));
@@ -290,7 +276,10 @@ public class Task1 implements Runnable {
     }
 
 
-    // 全表扫描
+    /**
+     * 全表扫描
+     * 
+     */
     @Test
     public void scanTable() throws IOException {
         Table table = connection.getTable(TableName.valueOf("TABLE_1"));
@@ -321,133 +310,17 @@ public class Task1 implements Runnable {
     }
 
 
-    // 过滤器
-    // 列值过滤器
-    @Test
-    public void singColumnFilter() throws IOException {
-    	Table table = connection.getTable(TableName.valueOf("TABLE_1"));
-        Scan scan = new Scan();
-
-        // 下列参数分别为，列族，列名，比较符号，值
-        SingleColumnValueFilter filter = new SingleColumnValueFilter(Bytes.toBytes("user"), Bytes.toBytes("name"), 
-        		CompareOperator.EQUAL, Bytes.toBytes("科比"));
-        scan.setFilter(filter);
-
-        // 获取 返回结果
-        ResultScanner scanner = table.getScanner(scan);
-
-        for(Result rs : scanner) {
-            String rowkey = Bytes.toString(rs.getRow());
-            System.out.println("row key : " + rowkey);
-
-            Cell[] cells  = rs.rawCells();
-
-            for(Cell cell : cells) {
-                System.out.println(Bytes.toString(cell.getQualifierArray(), cell.getQualifierOffset(), cell.getQualifierLength()) + " : " +
-                                Bytes.toString(cell.getValueArray(), cell.getValueOffset(), cell.getValueLength()));
-            }
-
-            System.out.println("-----------------------------------------");
-        }
-    }
-
-
-    // row key 过滤器
-    @Test
-    public void rowkeyFilter(String tableName) throws IOException {
-        Table table = connection.getTable(TableName.valueOf(tableName));
-        Scan scan = new Scan();
-        RowFilter filter = new RowFilter(CompareOperator.EQUAL, new RegexStringComparator("^hgs_00*"));
-
-        scan.setFilter(filter);
-        ResultScanner scanner  = table.getScanner(scan);
-
-        for(Result result : scanner) {
-            String rowkey = Bytes.toString(result.getRow());
-            System.out.println("row key : " + rowkey);
-            Cell[] cells  = result.rawCells();
-
-            for(Cell cell : cells) {
-                // System.out.println(Bytes.toString(cell.getQualifierArray(), cell.getQualifierOffset(), cell.getQualifierLength()) 
-            	// + " : " + Bytes.toString(cell.getValueArray(), cell.getValueOffset(), cell.getValueLength()));
-
-            	String rowName = new String(CellUtil.cloneRow(cell), "UTF-8");              // 行名（即行键值）
-				String columnFamily = new String(CellUtil.cloneFamily(cell), "UTF-8");      // 列族名
-				String columnName = new String(CellUtil.cloneQualifier(cell), "UTF-8");     // 列名
-				String columnValue = new String(CellUtil.cloneValue(cell), "UTF-8");        // 列值
-            }
-
-            System.out.println("-----------------------------------------");
-        }
-    }
-
-
-    // 列名前缀过滤器
-    @Test
-    public void columnPrefixFilter(String tableName, String prefix) throws IOException {
-        Table table = connection.getTable(TableName.valueOf(tableName));
-        Scan scan = new Scan();
-        ColumnPrefixFilter filter = new ColumnPrefixFilter(Bytes.toBytes(prefix));
-        scan.setFilter(filter);
-        ResultScanner scanner = table.getScanner(scan);
-
-        for(Result result : scanner) {
-            String rowkey = Bytes.toString(result.getRow());
-            System.out.println("row key : " + rowkey);
-            Cell[] cells = result.rawCells();
-
-            for(Cell cell : cells) {
-                System.out.println(Bytes.toString(cell.getQualifierArray(), cell.getQualifierOffset(), cell.getQualifierLength()) + " : " + 
-                                Bytes.toString(cell.getValueArray(), cell.getValueOffset(), cell.getValueLength()));
-            }
-
-            System.out.println("-----------------------------------------");
-        }
-    }
-
-
-    // 过滤器集合
-    @Test
-    public void filterSet(String tableName) throws IOException {
-        Table table = connection.getTable(TableName.valueOf(tableName));
-        Scan scan = new Scan();
-
-        // 创建 过滤器 列表
-        FilterList filterList = new FilterList(Operator.MUST_PASS_ALL);
-
-        // 分别 设置 过滤器
-        SingleColumnValueFilter filter1 = new SingleColumnValueFilter(Bytes.toBytes("user"),  Bytes.toBytes("age"), CompareOperator.GREATER, Bytes.toBytes("23"));
-        ColumnPrefixFilter filter2 = new ColumnPrefixFilter(Bytes.toBytes("ag"));
-
-        // 过滤器 集合 添加 过滤器
-        filterList.addFilter(filter1);
-        filterList.addFilter(filter2);
-
-        // 设置 过滤器
-        scan.setFilter(filterList);
-
-        // 获取 结果
-        ResultScanner scanner = table.getScanner(scan);
-
-        for(Result result : scanner) {
-            String rowkey = Bytes.toString(result.getRow());
-            System.out.println("row key : " + rowkey);
-            Cell[] cells = result.rawCells();
-
-            for(Cell cell : cells) {
-                System.out.println(Bytes.toString(cell.getQualifierArray(), cell.getQualifierOffset(), cell.getQualifierLength())+"::"+
-                                Bytes.toString(cell.getValueArray(), cell.getValueOffset(), cell.getValueLength()));
-            }
-
-            System.out.println("-----------------------------------------");
-        }
-    }
-
+    
 
 
     @After
     public void closeConn() throws IOException {
     	connection.close();
     }
+    
+    
+    public void run() {
+
+	}
 
 }

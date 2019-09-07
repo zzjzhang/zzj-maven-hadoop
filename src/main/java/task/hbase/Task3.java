@@ -168,6 +168,7 @@ public class Task3 implements Runnable {
 
     	while(Boolean.TRUE) {
     		resultScanner = table.getScanner(scan);
+    		int count = 0;
 
     		for(Result result : resultScanner) {
         		lastRow = result.getRow();
@@ -178,9 +179,14 @@ public class Task3 implements Runnable {
 
         		String rowKey = new String(lastRow);
         		System.out.println("row key : " + rowKey);
+        		count = count + 1;
         	}
 
     		if(lastRow == null) {
+    			break;
+    		}
+
+    		if(count < pageSize) {
     			break;
     		}
 

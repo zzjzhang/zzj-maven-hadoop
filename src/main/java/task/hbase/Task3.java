@@ -156,17 +156,35 @@ public class Task3 implements Runnable {
      */
     public void pageFilter(String tableName) throws IOException {
     	Table table = connection.getTable(TableName.valueOf(tableName));
+    	byte[] lastRow = null;
 
     	Scan scan = new Scan();
+
     	long pageSize = 10L;
     	PageFilter pageFilter = new PageFilter(pageSize);
     	scan.setFilter(pageFilter);
 
-    	ResultScanner resultScanner = table.getScanner(scan);
+    	ResultScanner resultScanner = null;
 
-    	for(Result result : resultScanner) {
-    		String rowKey = new String(result.getRow());
-    		System.out.println("row key : " + rowKey);
+    	while(Boolean.TRUE) {
+    		resultScanner = table.getScanner(scan);
+
+    		for(Result result : resultScanner) {
+        		lastRow = result.getRow();
+
+        		if(lastRow == null) {
+        			break;
+        		}
+
+        		String rowKey = new String(lastRow);
+        		System.out.println("row key : " + rowKey);
+        	}
+
+    		if(lastRow == null) {
+    			break;
+    		}
+
+    		scan.withStartRow(lastRow, Boolean.TRUE);
     	}
     }
 

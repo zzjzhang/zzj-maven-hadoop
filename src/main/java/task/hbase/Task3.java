@@ -26,7 +26,7 @@ import org.apache.hadoop.hbase.filter.SingleColumnValueFilter;
 
 /**
  * 
- * HADOOP - 2.7.7
+ * HADOOP - 2.7.1
  * HBASE - 2.0.1
  * 
  * 过滤器

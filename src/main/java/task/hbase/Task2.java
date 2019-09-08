@@ -35,7 +35,7 @@ import org.apache.hadoop.hbase.filter.SingleColumnValueFilter;
 import org.apache.hadoop.hbase.client.ColumnFamilyDescriptorBuilder;
 
 /**
- * HADOOP - 2.7.4
+ * HADOOP - 2.7.1
  * HBASE - 2.1
  * 
  * @author zzjzhang

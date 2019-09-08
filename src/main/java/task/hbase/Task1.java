@@ -38,10 +38,11 @@ import org.apache.hadoop.hbase.client.ColumnFamilyDescriptorBuilder;
 
 
 /**
- * HADOOP - 2.7.1
- * HBASE - 2.0.1
+ * 
+ * HBASE - 2.1.0
  * 
  * @author zzj26
+ * 
  */
 public class Task1 implements Runnable {
 
